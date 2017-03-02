@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		#boroughs { stroke: grey;
+					stroke-width: 0.7px;
+					fill: transparent; }
+		svg {border: solid black 1px; }
+	</style>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="http://d3js.org/topojson.v2.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+</head>
+<body>
+<!-- NYC Map Code: http://bl.ocks.org/phil-pedruco/6646844 -->
+<script>
+	var width = 1200,
+	   height = 1000;
+
+	var svg = d3.select("body").append("svg")
+	    .attr("width", width)
+	    .attr("height", height);
+
+	var treeData;
+	//var healthScale = d3.scaleOrdinal().domain(["Good", "Fair", "Poor"]).range(["green", "yellow", "red"]);
+
+	// Top 10 Species: 
+	//var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple", "Little Leaf Linden",
+	//											 "Stonefruit Tree", "Japanese Zelkova", "Maidenhair Tree", "Pagoda Tree"])
+	//									.range(["#99d36c", "#ffe685", "#fc9e4f", "#f55d3e", "#aa6da3", "#50c5b7", "#88bb92", "#add8e6", "#A43131", "#ffc0cb"]);
+
+	// Top 5 Species:
+	var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
+										.range(["#99d36c", "#fc9e4f", "#50c5b7", "#aa6da3", "#f55d3e"]);
+										//green orange blue purple red
+
+
+	d3.csv("top5species.csv", function(data) {
+		data.forEach(function(d) {
+			d.latitude = +d.latitude;
+			d.longitude = +d.longitude;
+		})
+		console.log(data[0]);
+		treeData = data;
+
+		var points = new Array(0);
+		treeData.forEach(function(tree) {
+			var a = new Array(2);
+			a[0] = [tree.longitude, tree.latitude];
+			a[1] = tree.species;
+			points.push(a);
+		});
+
+		console.log(points[0]);
+		console.log(points[0][1]);
+
+		d3.json("nyc.json", function(error, nyb) {
+		    var projection = d3.geoMercator()
+		  					.center([-73.94, 40.70])
+		  					.scale(90000)
+		  					.translate([(width)/2, (height)/2]);
+
+			var path = d3.geoPath()
+					.projection(projection);
+
+			var g = svg.append("g");
+
+			g.append("g")
+				.attr("id", "boroughs")
+				.selectAll(".state")
+				.data(nyb.features)
+				.enter().append("path")
+				.attr("class", function(d){ return d.properties.name; })
+				.attr("d", path);
+
+			//make trees
+			var circles = svg.selectAll("circle").data(points);
+			circles.enter().append("circle").attr("r", 0.5)
+			//.merge(circles)
+			.attr("cx", function(d) { return projection(d[0])[0]; })
+			.attr("cy", function(d) { return projection(d[0])[1]; })
+			.style("fill", function(d) {
+				return speciesScale(d[1]);
+			})
+			.style("opacity", 1);
+			});
+	})
+</script>
+</body>
+</html>
