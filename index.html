@@ -19,8 +19,12 @@
 
 	var svg = d3.select("body").append("svg")
 	    .attr("width", width)
-	    .attr("height", height);
-
+	    .attr("height", height)
+	    .attr("fill","#ceff99");
+	svg.append("rect")
+		.attr("width",width)
+		.attr("height",height)
+		.attr("fill","#f3ffe6");
 	var treeData;
 	//var healthScale = d3.scaleOrdinal().domain(["Good", "Fair", "Poor"]).range(["green", "yellow", "red"]);
 
@@ -33,7 +37,8 @@
 	var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
 										.range(["#99d36c", "#fc9e4f", "#50c5b7", "#aa6da3", "#f55d3e"]);
 										//green orange blue purple red
-
+	var boroughScale = d3.scaleOrdinal().domain([0,1,2,3,4])
+										.range(["#e1e1d0","#cdcdb1","#cdcdb1","#e1e1d0","#e1e1d0"]);
 
 	d3.csv("top5species.csv", function(data) {
 		data.forEach(function(d) {
@@ -65,24 +70,53 @@
 
 			var g = svg.append("g");
 
+			var Manhattan = new Array(0);
+			var Bronx  = new Array(0);
+			var Brooklyn = new Array(0);
+			var Queens = new Array(0);
+			var Staten = new Array(0);
+
+			for(var i in nyb.features){
+				switch(nyb.features[i].properties.boroughCode) {
+					case 1:
+						Manhattan.push(nyb.features[i])
+						break;
+					case 2:
+						Bronx.push(nyb.features[i])
+						break;
+					case 3:
+						Brooklyn.push(nyb.features[i])
+						break;
+					case 4:
+						Queens.push(nyb.features[i])
+						break;
+					case 5:
+						Staten.push(nyb.features[i])
+						break;
+				};
+			};
+			var boroughFeatures = [Manhattan, Bronx, Brooklyn, Queens, Staten];
+
+			for (var i in boroughFeatures){
 			g.append("g")
 				.attr("id", "boroughs")
 				.selectAll(".state")
-				.data(nyb.features)
+				.data(boroughFeatures[i])
 				.enter().append("path")
 				.attr("class", function(d){ return d.properties.name; })
-				.attr("d", path);
-
+				.attr("d", path)
+				.style("fill",boroughScale(i));
+			};
 			//make trees
 			var circles = svg.selectAll("circle").data(points);
-			circles.enter().append("circle").attr("r", 0.5)
+			circles.enter().append("circle").attr("r", 1)
 			//.merge(circles)
 			.attr("cx", function(d) { return projection(d[0])[0]; })
 			.attr("cy", function(d) { return projection(d[0])[1]; })
 			.style("fill", function(d) {
 				return speciesScale(d[1]);
 			})
-			.style("opacity", 1);
+			.style("opacity", 0.5);
 			});
 	})
 </script>
