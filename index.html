@@ -13,18 +13,40 @@
 </head>
 <body>
 <!-- NYC Map Code: http://bl.ocks.org/phil-pedruco/6646844 -->
+<svgs id ="canvas"></div>
+<!--<svg id = "treeSvg", height = "300", width = "500"></svg>-->
+
+
 <script>
+
 	var width = 1200,
 	   height = 1000;
 
-	var svg = d3.select("body").append("svg")
+	var svg = d3.select("#canvas").append("svg")
 	    .attr("width", width)
 	    .attr("height", height)
 	    .attr("fill","#ceff99");
-	svg.append("rect")
-		.attr("width",width)
-		.attr("height",height)
-		.attr("fill","#f3ffe6");
+
+		var leafBlock_HWratio = 1.15/3.5;
+		var leafBlockHeight_Max = 230;
+		var leafBlockWidth = leafBlockHeight_Max*leafBlock_HWratio;
+		var treeTop = 0;
+		var treeColor = ['blue','#5A8B32','#39852D','#479B23','#77B75B','#69AC4C'];
+
+		var leafBlockScale = leafBlockHeight_Max/250551;
+		var totalTrees = [85203,177293,250551,105318,65423]
+		for (i=1; i<6; i++) {
+			var blockHeight = totalTrees[i-1]*leafBlockScale;
+			svg.append("rect")
+				.attr("width",leafBlockWidth)
+				.attr("height",blockHeight)
+				//.attr("fill","rgb(112,173,71)")
+				.attr("fill",treeColor[i])
+				.attr("x",(i+1)*leafBlockWidth)
+				.attr("y", 50+treeTop+(leafBlockHeight_Max-blockHeight))
+				.attr("ry", 10);
+	}
+
 	var treeData;
 	//var healthScale = d3.scaleOrdinal().domain(["Good", "Fair", "Poor"]).range(["green", "yellow", "red"]);
 
@@ -120,5 +142,6 @@
 			});
 	})
 </script>
+
 </body>
 </html>
