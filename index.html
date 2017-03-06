@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<title>Trees in NYC</title>
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
 	<style>
 		#boroughs { stroke: grey;
 					stroke-width: 0.7px;
 					fill: transparent; }
-		svg {border: solid black 1px; }
+		html, body { margin:0; padding:0; overflow:hidden }
+		svg { position:fixed; top:0; bottom:0; left:0; right:0 }
 	</style>
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script src="http://d3js.org/topojson.v2.min.js"></script>
@@ -15,31 +18,25 @@
 <!-- NYC Map Code: http://bl.ocks.org/phil-pedruco/6646844 -->
 
 <script>
-	var width = 1200,
+	var width = 1500,
 	   height = 1000;
 
 	var svg = d3.select("body").append("svg")
 	    .attr("width", width)
 	    .attr("height", height)
-	    .attr("fill","#ceff99");
+	    .attr("fill", "#ceff99");
 	svg.append("rect")
-		.attr("width",width)
-		.attr("height",height)
-		.attr("fill","#f3ffe6");
+		.attr("width", width)
+		.attr("height", height)
+		.attr("fill", "#f3ffe6");
 	var treeData;
-	//var healthScale = d3.scaleOrdinal().domain(["Good", "Fair", "Poor"]).range(["green", "yellow", "red"]);
-
-	// Top 10 Species: 
-	//var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple", "Little Leaf Linden",
-	//											 "Stonefruit Tree", "Japanese Zelkova", "Maidenhair Tree", "Pagoda Tree"])
-	//									.range(["#99d36c", "#ffe685", "#fc9e4f", "#f55d3e", "#aa6da3", "#50c5b7", "#88bb92", "#add8e6", "#A43131", "#ffc0cb"]);
 
 	// Top 5 Species:
 	var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
 										.range(["#99d36c", "#fc9e4f", "#50c5b7", "#aa6da3", "#f55d3e"]);
 										//green orange blue purple red
 	var boroughScale = d3.scaleOrdinal().domain([0,1,2,3,4])
-										.range(["#e1e1d0","#cdcdb1","#cdcdb1","#e1e1d0","#e1e1d0"]);
+										.range(["#ededed","#eee8dc","#eee8dc","#ededed","#ededed"]);
 
 	d3.csv("top5species.csv", function(data) {
 		data.forEach(function(d) {
@@ -63,8 +60,8 @@
 		d3.json("nyc.json", function(error, nyb) {
 		    var projection = d3.geoMercator()
 		  					.center([-73.94, 40.70])
-		  					.scale(90000)
-		  					.translate([(width)/2, (height)/2]);
+		  					.scale(80000)
+		  					.translate([(width)/2 + 750, (height)/2 + 170]);
 
 			var path = d3.geoPath()
 					.projection(projection);
@@ -120,6 +117,75 @@
 			.style("opacity", 0.5);
 			});
 	})
+	var svg = d3.select("svg"),
+    	margin = {top: 300, right: 500, bottom: 200, left: 500},
+    	width = +svg.attr("width") - margin.left - margin.right,
+    	height = +svg.attr("height") - margin.top - margin.bottom,
+    	g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  	var x = d3.scaleBand()
+    	.rangeRound([0, width])
+    	.padding(0.5)
+      	//.align(0.1);
+
+	var y = d3.scaleLinear()
+		.rangeRound([height, 0]);
+
+	var speciesColors = d3.scaleOrdinal()
+	    .range(["#99d36c", "#fc9e4f", "#50c5b7", "#aa6da3", "#f55d3e", "#a05d56"]);
+
+	var stack = d3.stack()
+	    .offset(d3.stackOffsetExpand);
+
+	var treeData;
+
+	d3.csv("treeBars.csv", type, function(error, data) {
+	    if (error) throw error;
+
+	    data.sort(function(a, b) { 
+	    	return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total;
+	    });
+
+	    treeData = data;
+
+	    x.domain(data.map(function(d) { return d.borough; }));
+	    speciesColors.domain(data.columns.slice(1));
+
+	    var serie = g.selectAll(".serie")
+	    	.data(stack.keys(data.columns.slice(1))(data))
+	    	.enter().append("g")
+	        .attr("class", "serie")
+	        .attr("fill", function(d) { return speciesColors(d.key); });
+
+	    serie.selectAll("rect")
+	    	.data(function(d) { return d; })
+	    	.enter().append("rect")
+	        .attr("x", function(d) { return x(d.data.borough); })
+	        .attr("y", function(d) { return y(d[1]); })
+	        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+	        .attr("width", x.bandwidth());
+	});
+
+	function type(d, i, columns) {
+	    for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
+	    d.total = t;
+	    return d;
+	}
+	svg.select('g').attr("transform", "rotate(180) translate(-550, -800)");
+	svg.append("text").text("Trees in New York City")
+		.attr("x", 700)
+		.attr("y", 450)
+		.attr("text-anchor","middle")
+		.attr("alignment-baseline","central")
+		.style("fill", "black")
+		.style("font-family", "Josefin Sans")
+		.style("font-size", 30)
+	svg.append("rect").attr("height", 30).attr("width", 30).attr("x", 800).attr("y", 750).style("fill", "#99d36c"); //london
+	svg.append("rect").attr("height", 30).attr("width", 30).attr("x", 900).attr("y", 750).style("fill", "#fc9e4f"); //thornless
+	svg.append("rect").attr("height", 30).attr("width", 30).attr("x", 1000).attr("y", 750).style("fill", "#50c5b7"); //callery
+	svg.append("rect").attr("height", 30).attr("width", 30).attr("x", 1100).attr("y", 750).style("fill", "#aa6da3"); //swamp
+	svg.append("rect").attr("height", 30).attr("width", 30).attr("x", 1200).attr("y", 750).style("fill", "#f55d3e"); //norway
+	svg.append("rect").attr("height", 30).attr("width", 30).attr("x", 1300).attr("y", 750).style("fill", "#a05d56"); //other
 </script>
 </body>
 </html>
