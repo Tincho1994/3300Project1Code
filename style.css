@@ -1,0 +1,32 @@
+html, body { 
+	margin:0; padding:0; 
+	background-color:whitesmoke; 
+	font-family:"helvetica neue"; 
+	color:#2F343B; 
+	font-size:13px;
+}
+
+svg { 
+	position:relative; 
+	top:0; 
+	bottom:0; 
+	left:0; 
+	right:0; 
+	overflow:visible;
+}
+
+#container { 
+	background-color:whitesmoke; 
+}
+h1 { 
+	font-size:50px; padding-left:50px; 
+}
+h2 { 
+	opacity:.8; padding-left:50px; font-size:30px; 
+}
+
+#boroughs { 
+	stroke: grey;
+    stroke-width: 0.7px;
+    fill: transparent; 
+}

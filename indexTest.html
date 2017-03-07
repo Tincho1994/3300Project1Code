@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css" />
+  <title>Trees in NYC</title>
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+  <style>
+    #boroughs { stroke: grey;
+          stroke-width: 0.7px;
+          fill: transparent; }
+  html, body { margin:0; padding:0;}
+  svg { position:relative; top:0; bottom:0; left:0; right:0; overflow:visible;}
+  </style>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="http://d3js.org/topojson.v2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+</head>
+<body>
+<!-- NYC Map Code: http://bl.ocks.org/phil-pedruco/6646844 -->
+
+  <!--<svg id="canvas" width="1200" height="800" viewBox="0 0 1500 1000"></svg>-->
+
+    <!--<svg id="canvas" width="1200" height="800" viewBox="0 0 1500 1000"></svg>-->
+<svg id ="tree"></svg>
+<svg id="map"></svg>
+
+
+
+
+<script>
+var widthTree = 1500,
+    heightTree = 1000;
+
+var svgTree = d3.select("#tree")
+    .attr("width", widthTree)
+    .attr("height", heightTree);
+    svgTree.append("rect")
+        .attr("width", widthTree)
+        .attr("height", heightTree)
+        .attr("fill","#222");
+        var leafBlock_HWratio = 1.15/3.5;
+        var leafBlockHeight_Max = 250;
+        var leafBlockWidth = leafBlockHeight_Max*leafBlock_HWratio;
+        var treeTop = 0;
+        var treeColor = ['#5A8B32','#39852D','#479B23','#77B75B','#69AC4C'];
+
+        var leafBlockScale = leafBlockHeight_Max/250551;
+        var totalTrees = [85203,177293,250551,105318,65423]
+        svgTree.append()
+        for (i=1; i<6; i++) {
+          var blockHeight = totalTrees[i-1]*leafBlockScale;
+          svgTree.append("rect")
+            .attr("width",leafBlockWidth)
+            .attr("height",blockHeight)
+            //.attr("fill","rgb(112,173,71)")
+            .attr("fill",treeColor[i-1])
+            .attr("x",((i)*leafBlockWidth))
+            .attr("y", 100+treeTop+(leafBlockHeight_Max-blockHeight))
+            .attr("ry", 10);
+      }
+    svgTree.append("polygon")       // attach a polygon
+        .style("fill", "#D0A95C")     // remove any fill colour
+        .attr("transform", "translate(130,325)")
+        .attr("points", "130,25, 120,160, 190,160, 180,25");
+    svgTree.append("polygon")       // attach a polygon
+        .style("fill", "#AF8633")     // remove any fill colour
+        .attr("transform", "translate(130,325)")
+        .attr("points", "130,25, 120,160, 160,160, 150,25");
+
+
+
+  var widthMap = 600,
+     heightMap = 500;
+
+  var svgMap = d3.select("#map")
+    .attr("transform","translate("+String(widthTree/2) +"," +String(-heightTree/2)+")")//create svg to put map in 
+    .attr("width",widthMap)
+    .attr("height",heightMap);
+
+ var svgMapSpace = svgMap.append("g")
+    .attr("transform","translate("+String(widthTree/2) +"," +String(-heightTree/2)+")");
+    //.attr("transform","translate(330,-150)");
+    svgMapSpace.append("rect")
+    .attr("width", widthMap)
+    .attr("height", heightMap)
+    .attr("fill", "#f3ffe6")
+    .style("stroke", "#222")
+    .style("stroke-width",1);
+
+  // Top 5 Species:
+    var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
+                    .range(["#99d36c", "#fc9e4f", "#50c5b7", "#aa6da3", "#f55d3e"]);
+                    //green orange blue purple red
+    //5 Borroughs
+    var boroughScale = d3.scaleOrdinal().domain([0,1,2,3,4])
+                    .range(["#ededed","#eee8dc","#eee8dc","#ededed","#ededed"]);
+                    //colors
+
+    var treeData;
+
+    d3.csv("top5species.csv", function(data) {
+    data.forEach(function(d) {
+      d.latitude = +d.latitude;
+      d.longitude = +d.longitude;
+    })
+
+    treeData = data;
+    
+    var points = new Array(0);
+    treeData.forEach(function(tree) {
+      var a = new Array(2);
+      a[0] = [tree.longitude, tree.latitude];
+      a[1] = tree.species;
+      points.push(a);
+    });
+
+    d3.json("nyc.json", function(error, nyb) {
+        var projection = d3.geoMercator()
+                .center([-73.94, 40.70])
+                //.scale(80000)
+                .scale(65000)
+                .translate([(widthMap)/2, (heightMap)/2]);
+                //.translate([(width)/2 + 600, (height)/2 ])
+        var path = d3.geoPath()
+          .projection(projection);
+
+      var g = svgMapSpace.append("g");
+      var Manhattan = new Array(0);
+      var Bronx  = new Array(0);
+      var Brooklyn = new Array(0);
+      var Queens = new Array(0);
+      var Staten = new Array(0);
+      for(var i in nyb.features){
+        switch(nyb.features[i].properties.boroughCode) {
+          case 1:
+            Manhattan.push(nyb.features[i])
+            break;
+          case 2:
+            Bronx.push(nyb.features[i])
+            break;
+          case 3:
+            Brooklyn.push(nyb.features[i])
+            break;
+          case 4:
+            Queens.push(nyb.features[i])
+            break;
+          case 5:
+            Staten.push(nyb.features[i])
+            break;
+        };
+      };
+      var boroughFeatures = [Manhattan, Bronx, Brooklyn, Queens, Staten];
+      for (var i in boroughFeatures){
+      g.append("g")
+        .attr("id", "boroughs")
+        .selectAll(".state")
+        .data(boroughFeatures[i])
+        .enter().append("path")
+        .attr("class", function(d){ return d.properties.name; })
+        .attr("d", path)
+        .style("fill",boroughScale(i));
+      };
+      //make trees
+      var circles = svgMapSpace.selectAll("circle").data(points);
+      circles.enter().append("circle").attr("r", 1)
+      //.merge(circles)
+      .attr("cx", function(d) { return projection(d[0])[0]; })
+      .attr("cy", function(d) { return projection(d[0])[1]; })
+      .style("fill", function(d) {
+        return speciesScale(d[1]);
+      })
+      .style("opacity", 0.5);
+      });
+  })
+
+
+
+
+</script>
+</body>
+</html>
