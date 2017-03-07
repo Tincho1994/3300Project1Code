@@ -14,7 +14,6 @@
 <body>
 <!-- NYC Map Code: http://bl.ocks.org/phil-pedruco/6646844 -->
 
-
   <!--<svg id="canvas" width="1200" height="800" viewBox="0 0 1500 1000"></svg>-->
 
     <!--<svg id="canvas" width="1200" height="800" viewBox="0 0 1500 1000"></svg>-->
@@ -103,9 +102,9 @@ var treeSpace = svg.append("g")
     mapSpace.append("rect")
     .attr("width", widthMap)
     .attr("height", heightMap)
-    .attr("fill","white")
-    .style("stroke", "white")
-    .style("stroke-width",1);
+    .attr("fill","whitesmoke")
+    //.style("stroke", "white")
+    //.style("stroke-width",1);
 
   // Top 5 Species:
     var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
