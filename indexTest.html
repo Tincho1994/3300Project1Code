@@ -38,34 +38,34 @@ var svgTree = d3.select("#tree")
         .attr("width", widthTree)
         .attr("height", heightTree)
         .attr("fill","#222");
-        var leafBlock_HWratio = 1.15/3.5;
-        var leafBlockHeight_Max = 250;
-        var leafBlockWidth = leafBlockHeight_Max*leafBlock_HWratio;
-        var treeTop = 0;
-        var treeColor = ['#5A8B32','#39852D','#479B23','#77B75B','#69AC4C'];
+            var leafBlock_HWratio = 1.15/3.5;
+    var leafBlockHeight_Max = 250;
+    var leafBlockWidth = leafBlockHeight_Max*leafBlock_HWratio;
+    var treeTop = 0;
+    var treeColor = ['#5A8B32','#39852D','#479B23','#77B75B','#69AC4C'];
 
-        var leafBlockScale = leafBlockHeight_Max/250551;
-        var totalTrees = [85203,177293,250551,105318,65423]
-        svgTree.append()
-        for (i=1; i<6; i++) {
-          var blockHeight = totalTrees[i-1]*leafBlockScale;
-          svgTree.append("rect")
-            .attr("width",leafBlockWidth)
-            .attr("height",blockHeight)
-            //.attr("fill","rgb(112,173,71)")
-            .attr("fill",treeColor[i-1])
-            .attr("x",((i)*leafBlockWidth))
-            .attr("y", 100+treeTop+(leafBlockHeight_Max-blockHeight))
-            .attr("ry", 10);
-      }
-    svgTree.append("polygon")       // attach a polygon
-        .style("fill", "#D0A95C")     // remove any fill colour
-        .attr("transform", "translate(130,325)")
-        .attr("points", "130,25, 120,160, 190,160, 180,25");
-    svgTree.append("polygon")       // attach a polygon
-        .style("fill", "#AF8633")     // remove any fill colour
-        .attr("transform", "translate(130,325)")
-        .attr("points", "130,25, 120,160, 160,160, 150,25");
+    var leafBlockScale = leafBlockHeight_Max/250551;
+    var totalTrees = [85203,177293,250551,105318,65423]
+    svg.append()
+    for (i=1; i<6; i++) {
+      var blockHeight = totalTrees[i-1]*leafBlockScale;
+      svg.append("rect")
+        .attr("width",leafBlockWidth)
+        .attr("height",blockHeight)
+        //.attr("fill","rgb(112,173,71)")
+        .attr("fill",treeColor[i-1])
+        .attr("x",((i)*leafBlockWidth))
+        .attr("y", 100+treeTop+(leafBlockHeight_Max-blockHeight))
+        .attr("ry", 10);
+  }
+svg.append("polygon")       // attach a polygon
+    .style("fill", "#D0A95C")     // remove any fill colour
+    .attr("transform", "translate(130,325)")
+    .attr("points", "130,25, 120,160, 190,160, 180,25");
+svg.append("polygon")       // attach a polygon
+    .style("fill", "#AF8633")     // remove any fill colour
+    .attr("transform", "translate(130,325)")
+    .attr("points", "130,25, 120,160, 160,160, 150,25");
 
 
 

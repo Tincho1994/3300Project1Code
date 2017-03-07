@@ -102,9 +102,9 @@ var treeSpace = svg.append("g")
     mapSpace.append("rect")
     .attr("width", widthMap)
     .attr("height", heightMap)
-    .attr("fill","whitesmoke")
-    //.style("stroke", "white")
-    //.style("stroke-width",1);
+    .attr("fill","white")
+    .style("stroke", "white")
+    .style("stroke-width",1);
 
   // Top 5 Species:
     var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
