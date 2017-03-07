@@ -13,10 +13,12 @@ svg {
 	left:0; 
 	right:0; 
 	overflow:visible;
+	width:100%;
 }
 
 #container { 
 	background-color:whitesmoke; 
+	height:1000px; width:100%;
 }
 h1 { 
 	font-size:50px; padding-left:50px; 
@@ -29,4 +31,19 @@ h2 {
 	stroke: grey;
     stroke-width: 0.7px;
     fill: transparent; 
+}
+
+#divider{
+	border: 2px solid lightblue; 
+	width:20%; 
+	margin-left:50px;
+	float:left;
+}
+
+#description{
+	display:block;
+	font-size:20px;
+	padding-left:50px;
+	opacity:.7;
+	padding-top:20px;
 }
