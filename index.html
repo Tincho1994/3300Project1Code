@@ -105,15 +105,21 @@ var treeSpace = svg.append("g")
       .attr("fill","#AF8633")
       .attr("y", 290+treeTop+(leafBlockHeight_Max-blockHeight));
   svg.append("text") //root explanation
-      .text("Breakdown of Tree Species")
+      .text("Breakdown of the Five")
       .attr("y",440+treeTop+(leafBlockHeight_Max-blockHeight))
+      .attr("x",115)
+      .style("font-size","20px")
+      .style("opacity","0.8");
+  svg.append("text") //root explanation
+      .text("Most Common Tree Species")
+      .attr("y",470+treeTop+(leafBlockHeight_Max-blockHeight))
       .attr("x",85)
       .style("font-size","20px")
       .style("opacity","0.8");
   svg.append("text") //root explanation
       .text("by Borough")
-      .attr("y",470+treeTop+(leafBlockHeight_Max-blockHeight))
-      .attr("x",135)
+      .attr("y",500+treeTop+(leafBlockHeight_Max-blockHeight))
+      .attr("x",155)
       .style("font-size","20px")
       .style("opacity","0.8");
 
@@ -160,10 +166,8 @@ var treeSpace = svg.append("g")
     d3.json("nyc.json", function(error, nyb) {
         var projection = d3.geoMercator()
                 .center([-73.94, 40.70])
-                //.scale(80000)
-                .scale(80000)
+                .scale(90000)
                 .translate([(widthMap)/2, (heightMap)/2]);
-                //.translate([(width)/2 + 600, (height)/2 ])
         var path = d3.geoPath()
           .projection(projection);
 
