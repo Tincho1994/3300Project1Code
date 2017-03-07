@@ -48,7 +48,10 @@ var treeSpace = svg.append("g")
     var treeColor = ['#5A8B32','#39852D','#479B23','#77B75B','#69AC4C'];
 
     var leafBlockScale = leafBlockHeight_Max/250551;
-    var totalTrees = [85203,177293,250551,105318,65423]
+    var totalTrees = [85203,177293,250551,105318,65423];
+    var percentofTotal = ["12.5", "25.9", "36.6","15.4","9.6"];
+    var boroughs = ["Bronx", "Brooklyn", "Queens", "Staten Island", "Manhattan"];
+
     treeSpace.append()
     for (i=1; i<6; i++) {
       var blockHeight = totalTrees[i-1]*leafBlockScale;
@@ -60,7 +63,29 @@ var treeSpace = svg.append("g")
         .attr("x",((i)*leafBlockWidth))
         .attr("y", 70+treeTop+(leafBlockHeight_Max-blockHeight))
         .attr("ry", 10);
+      treeSpace.append("text")
+        .text(percentofTotal[i-1] + "%")
+        .attr("x",((i)*leafBlockWidth + leafBlockWidth/2))
+        .attr("y",70+treeTop+(leafBlockHeight_Max-blockHeight)+20)
+        .style("font-size","20px")
+        .style("opacity","1")
+        .style("fill","white")
+        .style("text-anchor","middle");
+      treeSpace.append("text")
+        .text(boroughs[i-1])
+        .attr("x",((i)*leafBlockWidth + leafBlockWidth/2))
+        .attr("y",70+treeTop+leafBlockHeight_Max-20)
+        .style("font-size","15px")
+        .style("opacity","1")
+        .style("fill","white")
+        .style("text-anchor","middle");
       }
+  treeSpace.append("text")
+      .text("Percent of Total Trees by Borough")
+      .attr("x",5*leafBlockWidth)
+      .attr("y",150)
+      .style("font-size","20px")
+      .style("opacity","0.8");
   treeSpace.append("polygon")       // attach a polygon
       .style("fill", "#D0A95C")     // remove any fill colour
       .attr("transform", "translate(130,295)")
@@ -239,7 +264,7 @@ var rootSpace = svg.append("g")
       d.total = t;
       return d;
   }
-  rootSpace.select("g").attr("transform", "rotate(180) translate(300, 0)");
+  g.select("g").attr("transform", "rotate(180) translate(300, 0)");
 
 // SECTION FOR ADDING ANNOTATIONS/LEGENDS
   // creating space for my legends
@@ -279,7 +304,6 @@ var rootSpace = svg.append("g")
     }
 
 // borough annotations
-    var boroughs = ["Bronx", "Brooklyn", "Queens", "Staten Island", "Manhattan"]
     for (i=0;i<5;i++){
       legendSpace.append("text").text(boroughs[i])
         .attr("x",110*i+400)
