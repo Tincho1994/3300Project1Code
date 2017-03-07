@@ -75,7 +75,7 @@ var treeSpace = svg.append("g")
         .text(boroughs[i-1])
         .attr("x",((i)*leafBlockWidth + leafBlockWidth/2))
         .attr("y",70+treeTop+leafBlockHeight_Max-20)
-        .style("font-size","15px")
+        .style("font-size","13px")
         .style("opacity","1")
         .style("fill","white")
         .style("text-anchor","middle");
@@ -127,8 +127,7 @@ var treeSpace = svg.append("g")
     mapSpace.append("rect")
     .attr("width", widthMap)
     .attr("height", heightMap)
-    .attr("fill","white")
-    .style("stroke", "white")
+    .attr("fill","whitesmoke")
     .style("stroke-width",1);
 
     // Top 5 Species:
