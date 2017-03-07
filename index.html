@@ -8,7 +8,6 @@
 <!-- SCRIPTS --> 
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="http://d3js.org/topojson.v2.min.js"></script>
-  <script src="d3-ring-note/d3-ring-note.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
 </head>
 <body>
@@ -21,7 +20,7 @@
 <div id= "container" style="height:1000px; width:100%;">
   <h1>Street-Side Trees in NYC</h1>
   <h2>By Amber Zhen, Martin Herrera, Yoo Kim </h2>
-  <div id ="divider" style="border: 2px solid lightblue; width:20%; margin-left:50px;"></div>
+  <div id ="description">Our project takes data from TreesCount! 2015, <br>an initiative by NYC Parks to find and catalogue all <br> the street trees on every block of New York City.</div>
   <svg id ="canvas"></svg>
 </div>
 
@@ -29,7 +28,7 @@
 
 <script>
 
-var widthTree = 1300,
+var widthTree = screen.width,
     heightTree = 1800;
 
 var svg = d3.select("#canvas")
@@ -107,7 +106,7 @@ var treeSpace = svg.append("g")
     .style("stroke", "white")
     .style("stroke-width",1);
 
-  // Top 5 Species:
+    // Top 5 Species:
     var speciesScale = d3.scaleOrdinal().domain(["London PlaneTree", "Thornless Honeylocust", "Callery Pear", "Swamp Spanish Oak", "Norway Maple"])
                     .range(["#99d36c", "#fc9e4f", "#50c5b7", "#aa6da3", "#f55d3e"]);
                     //green orange blue purple red
@@ -196,7 +195,7 @@ var treeSpace = svg.append("g")
 
 // roots
 var rootSpace = svg.append("g")
-      margin = {top: 0, right: 300, bottom: 200, left: 400},
+      margin = {top: 0, right: 430, bottom: 200, left: 400},
       width = +svg.attr("width") - margin.left - margin.right,
       //height = +svg.attr("height") - margin.top - margin.bottom,
       height = +svg.attr("height") - margin.top - margin.bottom,
@@ -213,13 +212,11 @@ var rootSpace = svg.append("g")
   //each borough's name
   var stack = d3.stack()
       .offset(d3.stackOffsetExpand);
-  var treeData;
+
+  var barData;
   d3.csv("treeBars.csv", type, function(error, data) {
       if (error) throw error;
-      data.sort(function(a, b) { 
-        return b[data.columns[1]] / b.total - a[data.columns[1]] / a.total;
-      });
-      treeData = data;
+      barData = data;
       x.domain(data.map(function(d) { return d.borough; }));
       speciesColors.domain(data.columns.slice(1));
       var serie = g.selectAll(".serie")
@@ -270,19 +267,19 @@ var rootSpace = svg.append("g")
       legendSpace.append("rect")
         .attr("height",30)
         .attr("width",30)
-        .attr("x",960)
+        .attr("x",1020)
         .attr("y",530+40*i)
         .style("fill", color[i]);
       legendSpace.append("text").text(specie[i])
         .attr("height",30)
         .attr("width",30)
-        .attr("x",1000)
+        .attr("x",1060)
         .attr("y",550+40*i)
         .style("font-size","13px");
     }
 
 // borough annotations
-    var boroughs = ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten"]
+    var boroughs = ["Bronx", "Brooklyn", "Queens", "Staten Island", "Manhattan"]
     for (i=0;i<5;i++){
       legendSpace.append("text").text(boroughs[i])
         .attr("x",110*i+400)
